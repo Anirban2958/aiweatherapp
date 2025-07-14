@@ -1,103 +1,322 @@
-# Security Configuration Guide
+# 🔐 Security Policy
 
-## 🔐 API Key Security
+## 🎯 Security Overview
 
-### Important Security Notes
+The AI Weather App is designed with security in mind. This document outlines our security practices and guidelines for contributors and users.
 
-⚠️ **NEVER commit API keys to version control!**
+## 🚨 Reporting Security Vulnerabilities
 
-Your API keys are sensitive credentials that should be kept private. Follow these guidelines:
+### How to Report
+If you discover a security vulnerability, please follow these steps:
 
-### 1. Environment Variables (Recommended)
-For production deployments, use environment variables:
+1. **DO NOT** create a public issue
+2. **Email directly**: Create a private issue or contact maintainers
+3. **Include details**:
+   - Description of the vulnerability
+   - Steps to reproduce
+   - Potential impact
+   - Suggested fix (if any)
 
+### Response Timeline
+- **Acknowledgment**: Within 24 hours
+- **Initial Assessment**: Within 48 hours
+- **Fix Development**: Varies by severity
+- **Public Disclosure**: After fix is deployed
+
+## 🔑 API Key Security
+
+### Best Practices
+- **Never commit API keys** to version control
+- **Use environment variables** for production
+- **Rotate keys regularly** (every 3-6 months)
+- **Monitor usage** for unexpected activity
+- **Use minimal permissions** for each API key
+
+### Key Storage Guidelines
+
+#### ✅ Secure Methods
 ```javascript
-// In your deployment platform (Netlify, Vercel, etc.)
-const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+// Environment variables (production)
+const API_KEY = process.env.OPENWEATHER_API_KEY;
+
+// Configuration file (not committed)
+import { API_KEY } from './config.js';
+
+// Server-side proxy (recommended for production)
+fetch('/api/weather?city=' + cityName)
 ```
 
-### 2. Local Development
-For local development, replace the placeholder keys in `script_enhanced_final.js`:
-
+#### ❌ Insecure Methods
 ```javascript
-// Replace these with your actual API keys
-const WEATHER_API_KEY = 'your_actual_openweathermap_key_here';
-const GEMINI_API_KEY = 'your_actual_gemini_key_here';
+// Never do this - exposed in source code
+const API_KEY = 'your-actual-api-key-here';
+
+// Never do this - visible in browser
+localStorage.setItem('apiKey', 'your-key');
+
+// Never do this - easily accessible
+window.API_KEY = 'your-key';
 ```
 
-### 3. API Key Locations to Update
+### API Key Rotation
+When rotating keys:
+1. Generate new API key
+2. Update production environment
+3. Test thoroughly
+4. Revoke old key
+5. Monitor for any issues
 
-#### OpenWeatherMap API Key
-- File: `script_enhanced_final.js`
-- Line: Look for `const WEATHER_API_KEY`
-- Get your key: https://openweathermap.org/api
+## 🌐 Client-Side Security
 
-#### Google Gemini AI API Key
-- File: `script_enhanced_final.js`
-- Line: Look for `const GEMINI_API_KEY`
-- Get your key: https://makersuite.google.com/app/apikey
+### Input Validation
+```javascript
+// Sanitize user input
+function sanitizeInput(input) {
+  return input.replace(/[<>\"']/g, '').trim();
+}
 
-### 4. Before Committing to Git
+// Validate city names
+function isValidCityName(city) {
+  const cityRegex = /^[a-zA-Z\s-']{1,100}$/;
+  return cityRegex.test(city);
+}
+```
 
-1. **Check your API keys are not in the code**
-2. **Use placeholder values for commits**
-3. **Verify .gitignore excludes sensitive files**
+### XSS Prevention
+```javascript
+// Use textContent instead of innerHTML
+element.textContent = userInput;
 
-### 5. Deployment Security
+// Escape HTML if innerHTML is necessary
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+```
 
-#### For GitHub Pages:
-- Use environment variables in your deployment workflow
-- Never store keys in repository secrets for client-side apps
+### CSRF Protection
+- Use SameSite cookies if implementing backend
+- Validate origin headers
+- Implement proper CORS policies
 
-#### For Netlify:
-- Set environment variables in Site Settings → Environment Variables
-- Use build-time replacement for static sites
+## 🔒 HTTPS Requirements
 
-#### For Vercel:
-- Set environment variables in Project Settings
-- Use Vercel's environment variable system
+### Why HTTPS is Required
+- **Geolocation API** requires HTTPS
+- **Service Workers** require HTTPS
+- **API security** is enhanced
+- **User trust** is improved
 
-### 6. API Usage Limits
+### Implementation
+```html
+<!-- Force HTTPS redirect -->
+<script>
+if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
+  location.replace('https:' + window.location.href.substring(window.location.protocol.length));
+}
+</script>
+```
 
-#### OpenWeatherMap Free Tier:
-- 1,000 calls/day
-- 60 calls/minute
-- Monitor usage in your dashboard
+## 🛡️ Content Security Policy
 
-#### Google Gemini AI:
-- Check current limits in AI Studio
-- Monitor usage to avoid overages
+### Recommended CSP Header
+```html
+<meta http-equiv="Content-Security-Policy" 
+      content="default-src 'self'; 
+               script-src 'self' 'unsafe-inline' https://fonts.googleapis.com; 
+               style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; 
+               font-src 'self' https://fonts.gstatic.com;
+               connect-src 'self' https://api.openweathermap.org https://generativelanguage.googleapis.com;
+               img-src 'self' data: https://openweathermap.org;
+               frame-ancestors 'none';
+               base-uri 'self';
+               form-action 'self';">
+```
 
-### 7. Best Practices
+### CSP Benefits
+- Prevents XSS attacks
+- Controls resource loading
+- Blocks malicious injections
+- Improves overall security
 
-✅ **Do:**
-- Use environment variables for production
-- Rotate API keys regularly
-- Monitor API usage
-- Use HTTPS for all requests
-- Implement rate limiting in your app
+## 🔍 Privacy Protection
 
-❌ **Don't:**
-- Commit API keys to version control
-- Share keys in screenshots or logs
-- Use keys in client-side code for production
-- Ignore usage monitoring
+### Data Collection
+The app only collects:
+- **Location data** (if user permits)
+- **Search queries** (city names)
+- **API responses** (cached temporarily)
 
-### 8. If You Accidentally Commit Keys
+### Data Storage
+- **Local storage** for user preferences
+- **Session storage** for temporary data
+- **No persistent user tracking**
+- **No personal data collection**
 
-1. **Immediately regenerate** the exposed keys
-2. **Update** your application with new keys
-3. **Delete** the commit history or repository if necessary
-4. **Review** your security practices
+### User Rights
+Users can:
+- Deny location access
+- Clear browser data
+- Use without personal information
+- Access all features anonymously
 
-### 9. Alternative Security Approaches
+## 🔧 Secure Development Practices
 
-For production applications, consider:
-- **Backend proxy**: Create a server to handle API calls
-- **Serverless functions**: Use Netlify/Vercel functions
-- **CORS-enabled APIs**: Some APIs allow domain restrictions
+### Code Review Checklist
+- [ ] No hardcoded secrets
+- [ ] Input validation implemented
+- [ ] Error handling doesn't expose sensitive info
+- [ ] HTTPS enforced where needed
+- [ ] Dependencies are up to date
+- [ ] Security headers configured
 
----
+### Dependency Management
+```bash
+# Check for vulnerabilities
+npm audit
 
-Remember: Client-side applications (like this one) expose code to users. For production use with sensitive data, consider implementing a backend service.
+# Fix automatically
+npm audit fix
+
+# Update dependencies
+npm update
+```
+
+### Static Analysis
+Recommended tools:
+- ESLint with security plugins
+- Snyk for dependency scanning
+- SonarQube for code quality
+- OWASP ZAP for security testing
+
+## 🚫 Common Vulnerabilities
+
+### Injection Attacks
+**Prevention**:
+```javascript
+// Validate and sanitize all inputs
+function validateInput(input) {
+  if (typeof input !== 'string') return false;
+  if (input.length > 100) return false;
+  return /^[a-zA-Z\s-']+$/.test(input);
+}
+```
+
+### Cross-Site Scripting (XSS)
+**Prevention**:
+```javascript
+// Use safe DOM methods
+element.textContent = userInput; // Safe
+element.innerHTML = userInput;   // Dangerous
+
+// Sanitize if HTML is needed
+function sanitizeHtml(html) {
+  return DOMPurify.sanitize(html);
+}
+```
+
+### Insecure Communications
+**Prevention**:
+- Always use HTTPS
+- Validate SSL certificates
+- Use secure API endpoints
+- Implement proper CORS
+
+## 🛠️ Security Tools
+
+### Browser Security Features
+```javascript
+// Enable security features
+navigator.serviceWorker.register('/sw.js', {
+  scope: '/',
+  updateViaCache: 'none'
+});
+
+// Check for secure context
+if (!window.isSecureContext) {
+  console.warn('App requires HTTPS for full functionality');
+}
+```
+
+### Monitoring
+```javascript
+// Basic security monitoring
+window.addEventListener('error', (event) => {
+  // Log security-related errors
+  if (event.error.message.includes('CSP')) {
+    console.error('Security policy violation:', event);
+  }
+});
+```
+
+## 📋 Security Checklist
+
+### Pre-Deployment
+- [ ] API keys secured
+- [ ] HTTPS configured
+- [ ] CSP headers set
+- [ ] Input validation added
+- [ ] Dependencies updated
+- [ ] Security headers configured
+- [ ] Error handling sanitized
+
+### Post-Deployment
+- [ ] SSL certificate valid
+- [ ] API monitoring active
+- [ ] Error logging configured
+- [ ] Security headers verified
+- [ ] Performance monitoring active
+
+### Regular Maintenance
+- [ ] Update dependencies monthly
+- [ ] Rotate API keys quarterly
+- [ ] Review security logs
+- [ ] Test security measures
+- [ ] Update CSP policies as needed
+
+## 📚 Security Resources
+
+### Documentation
+- [OWASP Web Security](https://owasp.org/www-project-web-security-testing-guide/)
+- [MDN Web Security](https://developer.mozilla.org/en-US/docs/Web/Security)
+- [CSP Reference](https://content-security-policy.com/)
+
+### Tools
+- [Observatory by Mozilla](https://observatory.mozilla.org/)
+- [Security Headers](https://securityheaders.com/)
+- [SSL Labs Test](https://www.ssllabs.com/ssltest/)
+
+## 🔄 Security Updates
+
+### Update Process
+1. Monitor security advisories
+2. Test updates in development
+3. Deploy to staging environment
+4. Verify functionality
+5. Deploy to production
+6. Monitor for issues
+
+### Emergency Response
+In case of security incident:
+1. Assess impact immediately
+2. Implement temporary fix
+3. Communicate with users
+4. Deploy permanent solution
+5. Document lessons learned
+
+## 📞 Contact Information
+
+For security-related matters:
+- **Repository Issues**: Create private issue
+- **Direct Contact**: Through GitHub profile
+- **Security Updates**: Watch repository for notifications
+
+## 🏆 Security Acknowledgments
+
+We appreciate security researchers who responsibly disclose vulnerabilities. Contributors who help improve security will be:
+- Acknowledged in release notes
+- Listed in security contributors section
+- Invited to ongoing security discussions
+
+Remember: Security is a shared responsibility. Users should also follow best practices when deploying and using the application. 🛡️

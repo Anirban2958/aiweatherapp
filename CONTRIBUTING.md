@@ -1,221 +1,227 @@
-# Contributing to AI Weather App
+# 🤝 Contributing to AI Weather App
 
-Thank you for your interest in contributing to the AI Weather App! We welcome contributions from developers of all skill levels.
+Thank you for your interest in contributing to the AI Weather App! This document provides guidelines and information for contributors.
 
-## 🚀 Getting Started
+## 🎯 Ways to Contribute
+
+### 🐛 Bug Reports
+- Use the [GitHub Issues](https://github.com/Anirban2958/aiweatherapp/issues) page
+- Search existing issues before creating new ones
+- Provide detailed steps to reproduce
+- Include browser/device information
+- Add screenshots if applicable
+
+### 💡 Feature Requests
+- Check existing issues for similar requests
+- Clearly describe the feature and its benefits
+- Provide use cases and examples
+- Consider the scope and complexity
+
+### 🔧 Code Contributions
+- Fork the repository
+- Create a feature branch
+- Follow coding standards
+- Add appropriate comments
+- Test your changes thoroughly
+- Submit a pull request
+
+## 🛠️ Development Setup
 
 ### Prerequisites
-- Basic knowledge of HTML, CSS, and JavaScript
-- A GitHub account
-- A text editor or IDE
-- Modern web browser for testing
+- Modern web browser
+- Text editor/IDE (VS Code recommended)
+- Basic knowledge of HTML, CSS, JavaScript
+- Git for version control
 
-### Development Setup
-
-1. **Fork the repository** on GitHub
-2. **Clone your fork** locally:
+### Local Development
+1. **Fork and Clone**
    ```bash
-   git clone https://github.com/yourusername/ai-weather-app.git
-   cd ai-weather-app
+   git clone https://github.com/yourusername/aiweatherapp.git
+   cd aiweatherapp
    ```
-3. **Create a branch** for your feature:
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-4. **Set up API keys** (see README.md for details)
-5. **Start development** by opening `index.html` in your browser
 
-## 📝 How to Contribute
+2. **Set Up API Keys**
+   - Follow the [Environment Setup Guide](ENVIRONMENT_SETUP.md)
+   - Add your API keys to `script_enhanced_final.js`
 
-### Reporting Bugs
-- Use the GitHub Issues tab
-- Include a clear title and description
-- Provide steps to reproduce the bug
-- Include screenshots if applicable
-- Mention your browser and operating system
+3. **Start Development**
+   - Open `index.html` in your browser
+   - Make changes and refresh to test
+   - Use browser developer tools for debugging
 
-### Suggesting Features
-- Check existing issues for similar suggestions
-- Create a new issue with the "feature request" label
-- Describe the feature and its benefits
-- Explain how it fits with the project's goals
+## 📝 Coding Standards
 
-### Code Contributions
-
-#### Code Style Guidelines
-- Use consistent indentation (2 spaces)
-- Follow existing naming conventions
-- Add comments for complex functionality
-- Keep functions small and focused
-- Use semantic HTML elements
-- Follow BEM methodology for CSS classes
-
-#### JavaScript Guidelines
-- Use modern ES6+ syntax
-- Prefer `const` and `let` over `var`
-- Use async/await for asynchronous operations
-- Handle errors gracefully
+### JavaScript
+- Use ES6+ features when appropriate
+- Follow camelCase naming convention
 - Add JSDoc comments for functions
-- Follow the existing code structure
-
-#### CSS Guidelines
-- Use CSS custom properties for theming
-- Follow the existing design system
-- Ensure responsive design principles
-- Test across different screen sizes
-- Maintain the glassmorphism aesthetic
-- Use semantic class names
-
-#### HTML Guidelines
-- Use semantic HTML5 elements
-- Include proper ARIA labels for accessibility
-- Ensure keyboard navigation works
-- Test with screen readers
-- Optimize for mobile devices
-
-### Pull Request Process
-
-1. **Update documentation** if needed
-2. **Test your changes** thoroughly
-3. **Ensure responsive design** works on all devices
-4. **Check browser compatibility**
-5. **Create a pull request** with:
-   - Clear title and description
-   - Reference any related issues
-   - Include screenshots of visual changes
-   - List any breaking changes
-
-## 🧪 Testing
-
-### Manual Testing Checklist
-- [ ] Weather data loads correctly
-- [ ] Location detection works
-- [ ] Search functionality works
-- [ ] Responsive design on mobile
-- [ ] AI chatbot responds appropriately
-- [ ] All interactive elements work
-- [ ] Error handling displays properly
-- [ ] Accessibility features work
-
-### Browser Testing
-Test your changes in:
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
-
-## 🎨 Design Principles
-
-### Visual Design
-- Maintain the glassmorphism aesthetic
-- Use consistent spacing and typography
-- Ensure good contrast for accessibility
-- Keep the interface clean and intuitive
-- Follow the established color palette
-
-### User Experience
-- Prioritize mobile-first design
-- Ensure fast loading times
-- Provide clear feedback for user actions
-- Make navigation intuitive
+- Use meaningful variable names
 - Handle errors gracefully
 
-## 🔧 Project Structure
-
-```
-ai-weather-app/
-├── index.html                 # Main HTML structure
-├── script_enhanced_final.js   # Core JavaScript functionality
-├── style_modern.css          # Styles and animations
-├── README.md                 # Project documentation
-├── CONTRIBUTING.md           # This file
-├── LICENSE                   # MIT License
-├── .gitignore               # Git ignore rules
-└── package.json             # Project metadata
+```javascript
+/**
+ * Fetches weather data for a given city
+ * @param {string} cityName - Name of the city
+ * @returns {Promise<Object>} Weather data object
+ */
+async function getWeatherData(cityName) {
+  // Implementation
+}
 ```
 
-### Key Components
+### CSS
+- Use BEM methodology for class naming
+- Group related properties together
+- Add comments for complex styles
+- Use CSS custom properties for consistent theming
 
-#### HTML Structure
-- Header with branding and status
-- Location input section
-- Weather display card
-- Advanced features sections
-- AI chatbot interface
+```css
+/* Weather card component */
+.weather-card {
+  /* Layout */
+  display: flex;
+  padding: var(--spacing-lg);
+  
+  /* Appearance */
+  background: var(--glass-bg);
+  border-radius: var(--border-radius);
+}
+```
 
-#### JavaScript Modules
-- API configuration and keys
-- Weather data fetching
-- UI updates and animations
-- AI chatbot integration
-- Event handlers
-- Utility functions
+### HTML
+- Use semantic HTML elements
+- Add proper ARIA labels for accessibility
+- Include alt text for images
+- Use meaningful class and ID names
 
-#### CSS Organization
-- Design system variables
-- Base styles and reset
-- Component styles
-- Animations and effects
-- Responsive media queries
+## 🔄 Pull Request Process
 
-## 🚫 What Not to Contribute
+### Before Submitting
+- [ ] Code follows project standards
+- [ ] Changes are tested in multiple browsers
+- [ ] Documentation is updated if needed
+- [ ] No console errors or warnings
+- [ ] API keys are not committed
 
-- Changes that break existing functionality
-- Features that don't align with the project goals
-- Code that doesn't follow the style guidelines
-- Large refactoring without prior discussion
-- Changes without proper testing
-- Proprietary or copyrighted content
+### PR Guidelines
+1. **Create a descriptive title**
+   - ✅ "Add dark mode toggle functionality"
+   - ❌ "Fix stuff"
 
-## 💡 Ideas for Contributions
+2. **Provide detailed description**
+   - What changes were made
+   - Why the changes were necessary
+   - How to test the changes
+   - Screenshots if UI changes
 
-### Easy (Good for beginners)
-- Fix typos in documentation
-- Improve error messages
-- Add loading animations
-- Enhance accessibility
-- Fix minor bugs
+3. **Reference related issues**
+   - Use "Fixes #123" or "Closes #123"
+   - Link to relevant discussions
 
-### Medium
-- Add new weather features
-- Improve responsive design
-- Add unit tests
-- Optimize performance
-- Add new animations
+### Review Process
+- Maintainers will review within 48 hours
+- Address feedback promptly
+- Be open to suggestions and changes
+- Update documentation if requested
 
-### Advanced
-- Integrate new APIs
-- Add offline functionality
-- Implement service worker
-- Add advanced AI features
-- Create build system
+## 🧪 Testing Guidelines
 
-## 📞 Getting Help
+### Manual Testing
+- Test in Chrome, Firefox, Safari, Edge
+- Test on mobile devices
+- Test with different screen sizes
+- Verify all features work correctly
+- Check for console errors
 
-- **GitHub Issues**: For bug reports and feature requests
-- **Discussions**: For general questions and ideas
-- **Code Review**: We'll provide feedback on pull requests
-- **Documentation**: Check the README.md for setup help
+### Accessibility Testing
+- Use keyboard navigation
+- Test with screen readers
+- Verify color contrast
+- Check ARIA labels
 
-## 🏆 Recognition
+## 📋 Issue Templates
 
-Contributors will be recognized in:
-- The project README
-- Release notes for their contributions
-- GitHub contributor list
+### Bug Report Template
+```markdown
+**Bug Description**
+Clear description of the bug
+
+**Steps to Reproduce**
+1. Go to...
+2. Click on...
+3. See error
+
+**Expected Behavior**
+What should happen
+
+**Actual Behavior**
+What actually happens
+
+**Environment**
+- Browser: [e.g., Chrome 91]
+- OS: [e.g., Windows 10]
+- Device: [e.g., Desktop]
+```
+
+### Feature Request Template
+```markdown
+**Feature Description**
+Clear description of the feature
+
+**Problem Statement**
+What problem does this solve?
+
+**Proposed Solution**
+How should this work?
+
+**Alternatives Considered**
+Other approaches you've thought about
+
+**Additional Context**
+Screenshots, mockups, etc.
+```
+
+## 🏷️ Labels and Milestones
+
+### Issue Labels
+- `bug` - Something isn't working
+- `enhancement` - New feature request
+- `documentation` - Documentation improvements
+- `good first issue` - Good for newcomers
+- `help wanted` - Extra attention needed
+- `priority: high` - Critical issues
+- `ui/ux` - User interface/experience
+
+## 🎖️ Recognition
+
+Contributors will be:
+- Listed in the README contributors section
+- Mentioned in release notes for significant contributions
+- Invited to join the maintainers team for outstanding contributions
+
+## ❓ Questions?
+
+- Check existing [Issues](https://github.com/Anirban2958/aiweatherapp/issues)
+- Read the [README](README.md) and [Documentation](QUICKSTART.md)
+- Contact maintainers through GitHub
 
 ## 📜 Code of Conduct
 
-- Be respectful and inclusive
-- Welcome newcomers
-- Provide constructive feedback
-- Focus on the code, not the person
-- Help create a positive environment
+### Our Pledge
+We pledge to make participation in our project a harassment-free experience for everyone, regardless of age, body size, disability, ethnicity, gender identity and expression, level of experience, nationality, personal appearance, race, religion, or sexual identity and orientation.
 
-## 📄 License
+### Expected Behavior
+- Use welcoming and inclusive language
+- Be respectful of differing viewpoints
+- Accept constructive criticism gracefully
+- Focus on what's best for the community
+- Show empathy towards other community members
 
-By contributing, you agree that your contributions will be licensed under the MIT License.
-
----
+### Unacceptable Behavior
+- Harassment of any kind
+- Discriminatory language or actions
+- Personal attacks or insults
+- Public or private harassment
+- Publishing others' private information
 
 Thank you for contributing to the AI Weather App! 🌤️

@@ -22,19 +22,19 @@
     "openweathermap"
   ],
   "author": {
-    "name": "Your Name",
-    "email": "your.email@example.com",
-    "url": "https://github.com/yourusername"
+    "name": "Anirban2958",
+    "email": "anirban@example.com",
+    "url": "https://github.com/Anirban2958"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/ai-weather-app.git"
+    "url": "https://github.com/Anirban2958/aiweatherapp.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/ai-weather-app/issues"
+    "url": "https://github.com/Anirban2958/aiweatherapp/issues"
   },
-  "homepage": "https://yourusername.github.io/ai-weather-app",
+  "homepage": "https://anirban2958.github.io/aiweatherapp",
   "dependencies": {},
   "devDependencies": {},
   "engines": {
@@ -50,11 +50,12 @@
     "script_enhanced_final.js",
     "style_modern.css",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    ".github/workflows/deploy.yml"
   ],
   "funding": {
     "type": "github",
-    "url": "https://github.com/sponsors/yourusername"
+    "url": "https://github.com/sponsors/Anirban2958"
   },
   "config": {
     "port": 8000

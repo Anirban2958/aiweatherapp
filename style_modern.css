@@ -1255,83 +1255,49 @@ header {
     font-size: 0.875rem;
 }
 
-/**
- * Active and hover states for tab buttons
- * Enhanced appearance for selected and hovered tabs
- */
 .tab-btn.active,
 .tab-btn:hover {
-    background: var(--white);     /* White background for active/hover */
-    color: var(--gray-700);       /* Dark text for contrast */
-    box-shadow: var(--shadow-md); /* Elevation shadow */
+    background: var(--white);
+    color: var(--gray-700);
+    box-shadow: var(--shadow-md);
 }
 
-/* ===== BUTTON RIPPLE EFFECT ANIMATION ===== */
-
-/**
- * Ripple effect element for button interactions
- * Creates expanding circle animation on button clicks
- */
+/* ===== RIPPLE EFFECT ===== */
 .btn-ripple {
-    position: absolute;                    /* Absolute positioning within button */
-    border-radius: 50%;                   /* Perfect circle shape */
-    background: rgba(255, 255, 255, 0.3); /* Semi-transparent white ripple */
-    transform: scale(0);                  /* Start at zero scale */
-    animation: ripple 0.6s linear;        /* Ripple expansion animation */
-    pointer-events: none;                 /* Don't interfere with clicks */
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(0);
+    animation: ripple 0.6s linear;
+    pointer-events: none;
 }
 
-/**
- * Ripple expansion animation
- * Scales up the ripple effect and fades it out
- */
 @keyframes ripple {
     to {
-        transform: scale(4);  /* Scale up to 4x size */
-        opacity: 0;           /* Fade out completely */
+        transform: scale(4);
+        opacity: 0;
     }
 }
 
-/* ===== RESPONSIVE DESIGN & MOBILE OPTIMIZATION ===== */
-
-/**
- * Mobile and tablet breakpoint (768px and below)
- * Optimizes layout and typography for smaller screens
- */
+/* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 768px) {
-    /**
-     * Mobile container adjustments
-     * Reduces padding for better space utilization
-     */
     .container {
-        padding: var(--space-4);  /* Smaller padding on mobile */
+        padding: var(--space-4);
     }
     
-    /**
-     * Mobile header layout
-     * Stacks header elements vertically
-     */
     .header-content {
-        flex-direction: column;   /* Stack items vertically */
-        gap: var(--space-4);      /* Consistent spacing */
-        text-align: center;       /* Center all content */
+        flex-direction: column;
+        gap: var(--space-4);
+        text-align: center;
     }
     
-    /**
-     * Mobile header title sizing
-     * Reduces title size for mobile readability
-     */
     .header-text h1 {
-        font-size: 2rem;  /* Smaller title on mobile */
+        font-size: 2rem;
     }
     
-    /**
-     * Mobile weather card header
-     * Stacks location and meta information vertically
-     */
     .weather-card-header {
-        flex-direction: column;  /* Stack vertically */
-        text-align: center;      /* Center content */
+        flex-direction: column;
+        text-align: center;
         gap: var(--space-4);
     }
     
