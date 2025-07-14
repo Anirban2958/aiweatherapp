@@ -1,0 +1,62 @@
+{
+  "name": "ai-weather-app",
+  "version": "1.0.0",
+  "description": "A modern, feature-rich weather application with AI-powered chatbot integration",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "serve": "npx serve .",
+    "test": "echo \"No tests specified\" && exit 0",
+    "build": "echo \"No build process needed for static site\" && exit 0"
+  },
+  "keywords": [
+    "weather",
+    "ai",
+    "chatbot",
+    "javascript",
+    "html",
+    "css",
+    "responsive",
+    "glassmorphism",
+    "gemini-ai",
+    "openweathermap"
+  ],
+  "author": {
+    "name": "Your Name",
+    "email": "your.email@example.com",
+    "url": "https://github.com/yourusername"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/ai-weather-app.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/ai-weather-app/issues"
+  },
+  "homepage": "https://yourusername.github.io/ai-weather-app",
+  "dependencies": {},
+  "devDependencies": {},
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "files": [
+    "index.html",
+    "script_enhanced_final.js",
+    "style_modern.css",
+    "README.md",
+    "LICENSE"
+  ],
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/yourusername"
+  },
+  "config": {
+    "port": 8000
+  }
+}

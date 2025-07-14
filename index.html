@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta tags for proper document setup -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    
+    <!-- Favicon - Weather emoji as SVG for better quality -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌤️</text></svg>">
+    
+    <!-- Main stylesheet - Modern design with glassmorphism effects -->
+    <link rel="stylesheet" href="style_modern.css">
+    
+    <!-- External font libraries for modern typography -->
+    <!-- Inter: Clean, professional font for UI elements -->
+    <!-- Poppins: Rounded, friendly font for headings and emphasis -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Material Icons for consistent iconography throughout the app -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- Animation libraries for enhanced user experience -->
+    <!-- Animate.css: Pre-built CSS animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    <!-- AOS (Animate On Scroll): Scroll-triggered animations -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <!-- External libraries for advanced features -->
+    <!-- Chart.js: Interactive weather charts and data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Leaflet.js: Interactive maps with weather overlays -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+    <!-- ===== ANIMATED BACKGROUND SYSTEM ===== -->
+    <!-- Dynamic background with floating orbs and weather-based particle effects -->
+    <div id="animatedBackground" class="animated-background">
+        <!-- Floating gradient orbs that create depth and visual interest -->
+        <div class="gradient-orbs">
+            <div class="orb orb-1"></div> <!-- Top-left orb with warm gradient -->
+            <div class="orb orb-2"></div> <!-- Bottom-right orb with cool gradient -->
+            <div class="orb orb-3"></div> <!-- Center orb with accent gradient -->
+        </div>
+        <!-- Container for weather-specific particle effects (rain, snow, etc.) -->
+        <div class="weather-particles"></div>
+    </div>
+
+    <!-- ===== MAIN APPLICATION CONTAINER ===== -->
+    <!-- Glassmorphism container with fade-up animation on page load -->
+    <div class="container" data-aos="fade-up" data-aos-duration="1000">
+        
+        <!-- ===== HEADER SECTION ===== -->
+        <!-- App branding and live data status indicator -->
+        <header data-aos="fade-down" data-aos-delay="200">
+            <div class="header-content">
+                <!-- Left side: Logo and app title -->
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <span class="material-icons">wb_sunny</span> <!-- Sun icon for weather theme -->
+                    </div>
+                    <div class="header-text">
+                        <h1>WeatherPro</h1> <!-- Main app title with gradient text -->
+                        <p>Advanced Weather Intelligence</p> <!-- Subtitle describing app capabilities -->
+                    </div>
+                </div>
+                <!-- Right side: Status indicator for API connectivity -->
+                <div class="weather-status-indicator">
+                    <div class="status-dot"></div> <!-- Green dot indicating live data -->
+                    <span>Live Data</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- ===== LOCATION INPUT SECTION ===== -->
+        <!-- User can get current location or search for any city -->
+        <div class="location-section" data-aos="fade-up" data-aos-delay="400">
+            <div class="location-card">
+                <!-- Current Location Button -->
+                <!-- Uses browser's geolocation API to detect user's position -->
+                <button id="getLocationBtn" class="location-btn modern-btn">
+                    <span class="material-icons">my_location</span> <!-- GPS location icon -->
+                    <span>Get Current Location</span>
+                    <div class="btn-ripple"></div> <!-- Ripple effect on click -->
+                </button>
+                
+                <!-- Visual divider between location methods -->
+                <div class="divider">
+                    <span>or</span>
+                </div>
+                
+                <!-- City Search Container -->
+                <!-- Allows manual search for any city worldwide -->
+                <div class="search-container">
+                    <div class="search-input-wrapper">
+                        <span class="material-icons search-icon">search</span> <!-- Search icon -->
+                        <input type="text" id="cityInput" placeholder="Search for any city...">
+                        <button id="searchBtn" class="search-btn">
+                            <span class="material-icons">arrow_forward</span> <!-- Arrow icon for search -->
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== LOADING INDICATOR ===== -->
+        <!-- Animated spinner shown while API calls are in progress -->
+        <div id="loading" class="loading hidden">
+            <div class="modern-spinner">
+                <!-- Triple-ring spinner with staggered animations for smooth effect -->
+                <div class="spinner-ring"></div> <!-- Outer ring -->
+                <div class="spinner-ring"></div> <!-- Middle ring -->
+                <div class="spinner-ring"></div> <!-- Inner ring -->
+            </div>
+            <p>Fetching weather data...</p> <!-- Status message for user feedback -->
+        </div>
+
+        <!-- ===== ERROR MESSAGE CONTAINER ===== -->
+        <!-- Displays user-friendly error messages when API calls fail -->
+        <div id="error" class="error hidden" data-aos="shake">
+            <div class="error-content">
+                <span class="material-icons error-icon">error_outline</span> <!-- Warning icon -->
+                <div class="error-text">
+                    <h4>Unable to fetch weather data</h4> <!-- Primary error message -->
+                    <p>Please check your connection and try again</p> <!-- Secondary help text -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== MAIN WEATHER CARD ===== -->
+        <!-- Primary weather information display with glassmorphism design -->
+        <div id="weatherCard" class="weather-card hidden" data-aos="fade-up" data-aos-delay="600">
+            
+            <!-- Weather Card Header -->
+            <!-- Location information and current weather icon -->
+            <div class="weather-card-header">
+                <div class="location-info">
+                    <!-- Primary location display -->
+                    <div class="location-main">
+                        <h2 id="cityName"></h2> <!-- City name from API -->
+                        <span class="material-icons location-pin">place</span> <!-- Location pin icon -->
+                    </div>
+                    <p id="country"></p> <!-- Country name for context -->
+                    <!-- Metadata: current time and last update timestamp -->
+                    <div class="weather-meta">
+                        <span id="currentTime"></span> <!-- Live local time -->
+                        <span class="separator">•</span> <!-- Visual separator -->
+                        <span id="lastUpdated"></span> <!-- Last API update time -->
+                    </div>
+                </div>
+                <!-- Weather icon container with animated background -->
+                <div class="weather-icon-container">
+                    <div class="weather-icon-bg"></div> <!-- Animated background gradient -->
+                    <span id="weatherEmoji" class="weather-icon"></span> <!-- Weather emoji icon -->
+                </div>
+            </div>
+
+            <!-- Temperature Section -->
+            <!-- Main temperature display with unit toggle functionality -->
+            <div class="temperature-section">
+                <div class="temp-display">
+                    <!-- Primary temperature with unit toggle -->
+                    <div class="main-temp">
+                        <span id="temperature"></span> <!-- Current temperature value -->
+                        <span class="unit">°C</span> <!-- Temperature unit indicator -->
+                        <!-- Unit toggle button (Celsius ↔ Fahrenheit) -->
+                        <button class="unit-toggle" onclick="toggleTemperatureUnit()">
+                            <span class="material-icons">swap_horiz</span> <!-- Swap icon -->
+                        </button>
+                    </div>
+                    <!-- Additional temperature information -->
+                    <div class="temp-details">
+                        <!-- "Feels like" temperature with thermometer icon -->
+                        <div class="feels-like">
+                            <span class="material-icons">thermostat</span>
+                            Feels like <span id="feelsLike"></span>°C
+                        </div>
+                        <!-- Weather condition description -->
+                        <div class="weather-description">
+                            <span id="description"></span> <!-- e.g., "Partly cloudy" -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weather Details Grid -->
+            <!-- Additional weather metrics in card format -->
+            <div class="weather-details">
+                <!-- Wind Speed Card -->
+                <!-- Displays current wind speed with visual progress indicator -->
+                <div class="detail-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="detail-icon">
+                        <span class="material-icons">air</span> <!-- Wind/air icon -->
+                    </div>
+                    <div class="detail-info">
+                        <span class="detail-label">Wind Speed</span>
+                        <span class="detail-value" id="windSpeed"></span> <!-- km/h or mph -->
+                    </div>
+                    <!-- Visual progress bar for wind intensity -->
+                    <div class="detail-chart">
+                        <div class="mini-progress" data-value="65"></div>
+                    </div>
+                </div>
+
+                <!-- Humidity Card -->
+                <!-- Shows atmospheric humidity percentage -->
+                <div class="detail-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="detail-icon">
+                        <span class="material-icons">water_drop</span> <!-- Water drop icon -->
+                    </div>
+                    <div class="detail-info">
+                        <span class="detail-label">Humidity</span>
+                        <span class="detail-value" id="humidity"></span> <!-- Percentage value -->
+                    </div>
+                    <!-- Visual progress bar for humidity level -->
+                    <div class="detail-chart">
+                        <div class="mini-progress" data-value="75"></div>
+                    </div>
+                </div>
+
+                <!-- Visibility Card -->
+                <!-- Atmospheric visibility distance -->
+                <div class="detail-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="detail-icon">
+                        <span class="material-icons">visibility</span> <!-- Eye/visibility icon -->
+                    </div>
+                    <div class="detail-info">
+                        <span class="detail-label">Visibility</span>
+                        <span class="detail-value" id="visibility"></span> <!-- Distance in km/miles -->
+                    </div>
+                    <!-- Visual progress bar for visibility clarity -->
+                    <div class="detail-chart">
+                        <div class="mini-progress" data-value="90"></div>
+                    </div>
+                </div>
+
+                <!-- Atmospheric Pressure Card -->
+                <!-- Barometric pressure measurement -->
+                <div class="detail-card" data-aos="fade-up" data-aos-delay="400">
+                    <div class="detail-icon">
+                        <span class="material-icons">compress</span> <!-- Pressure/compression icon -->
+                    </div>
+                    <div class="detail-info">
+                        <span class="detail-label">Pressure</span>
+                        <span class="detail-value" id="pressure"></span> <!-- hPa or inHg -->
+                    </div>
+                    <!-- Visual progress bar for pressure level -->
+                    <div class="detail-chart">
+                        <div class="mini-progress" data-value="80"></div>
+                    </div>
+                </div>
+
+                <!-- Sunrise Time Card -->
+                <!-- Local sunrise time with sun arc visualization -->
+                <div class="detail-card" data-aos="fade-up" data-aos-delay="500">
+                    <div class="detail-icon">
+                        <span class="material-icons">wb_sunny</span> <!-- Sun icon -->
+                    </div>
+                    <div class="detail-info">
+                        <span class="detail-label">Sunrise</span>
+                        <span class="detail-value" id="sunrise"></span> <!-- Local time format -->
+                    </div>
+                    <!-- Visual sun arc animation -->
+                    <div class="detail-chart">
+                        <div class="sun-arc"></div>
+                    </div>
+                </div>
+
+                <!-- Sunset Time Card -->
+                <!-- Local sunset time with evening sun arc -->
+                <div class="detail-card" data-aos="fade-up" data-aos-delay="600">
+                    <div class="detail-icon">
+                        <span class="material-icons">brightness_3</span> <!-- Moon/evening icon -->
+                    </div>
+                    <div class="detail-info">
+                        <span class="detail-label">Sunset</span>
+                        <span class="detail-value" id="sunset"></span> <!-- Local time format -->
+                    </div>
+                    <!-- Visual sunset arc animation -->
+                    <div class="detail-chart">
+                        <div class="sun-arc sunset"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== FEATURE ACTION BUTTONS ===== -->
+            <!-- Quick access buttons for additional app features -->
+            <div class="feature-actions" data-aos="fade-up" data-aos-delay="700">
+                <!-- Primary Action Buttons -->
+                <!-- Core actions for weather sharing and favorites -->
+                <div class="action-grid">
+                    <!-- Share Weather Button -->
+                    <!-- Generates shareable weather summary via Web Share API or clipboard -->
+                    <button class="action-btn primary" onclick="shareWeather()">
+                        <span class="material-icons">share</span>
+                        <span>Share Weather</span>
+                        <div class="btn-ripple"></div> <!-- Ripple effect animation -->
+                    </button>
+                    
+                    <!-- Add to Favorites Button -->
+                    <!-- Saves current city to user's favorite locations -->
+                    <button class="action-btn secondary" onclick="addToFavorites(document.getElementById('cityName').textContent)">
+                        <span class="material-icons">favorite_border</span>
+                        <span>Add to Favorites</span>
+                        <div class="btn-ripple"></div> <!-- Ripple effect animation -->
+                    </button>
+                </div>
+                
+                <!-- Feature Tab Navigation -->
+                <!-- Toggles between different advanced weather features -->
+                <div class="feature-tabs">
+                    <!-- 5-Day Forecast Tab -->
+                    <!-- Shows extended weather forecast in card format -->
+                    <button class="tab-btn active" onclick="toggleForecast()">
+                        <span class="material-icons">calendar_month</span>
+                        <span>5-Day Forecast</span>
+                    </button>
+                    <!-- Weather Analytics Tab -->
+                    <!-- Displays interactive charts and weather trends -->
+                    <button class="tab-btn" onclick="toggleCharts()">
+                        <span class="material-icons">analytics</span>
+                        <span>Analytics</span>
+                    </button>
+                    <!-- Interactive Weather Map Tab -->
+                    <!-- Shows live weather map with radar and overlays -->
+                    <button class="tab-btn" onclick="toggleMap()">
+                        <span class="material-icons">map</span>
+                        <span>Weather Map</span>
+                    </button>
+                    <!-- Activity Suggestions Tab -->
+                    <!-- Recommends activities based on current weather -->
+                    <button class="tab-btn" onclick="toggleActivities()">
+                        <span class="material-icons">beach_access</span>
+                        <span>Activities</span>
+                    </button>
+                    <!-- Air Quality Tab -->
+                    <!-- Shows air quality index and pollen information -->
+                    <button class="tab-btn" onclick="toggleAirQuality()">
+                        <span class="material-icons">air</span>
+                        <span>Air Quality</span>
+                    </button>
+                    <!-- Clothing Recommendations Tab -->
+                    <!-- Suggests appropriate clothing for weather conditions -->
+                    <button class="tab-btn" onclick="toggleClothing()">
+                        <span class="material-icons">checkroom</span>
+                        <span>Outfit</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== ADVANCED FEATURE SECTIONS ===== -->
+        
+        <!-- ===== 5-DAY FORECAST SECTION ===== -->
+        <!-- Extended weather forecast display with daily cards -->
+        <div id="forecastSection" class="forecast-section hidden">
+            <div class="section-title">📅 5-Day Weather Forecast</div>
+            <div class="forecast-container" id="forecastContainer">
+                <!-- Forecast cards will be dynamically populated by JavaScript -->
+                <!-- Each card shows: date, weather icon, high/low temps, conditions -->
+            </div>
+        </div>
+
+        <!-- ===== WEATHER CHARTS SECTION ===== -->
+        <!-- Interactive data visualization using Chart.js -->
+        <div id="chartsSection" class="charts-section hidden">
+            <div class="section-title">📊 Weather Analytics</div>
+            <div class="charts-container">
+                <!-- Temperature Trend Chart -->
+                <!-- Line chart showing 24-hour temperature variation -->
+                <div class="chart-card">
+                    <h3>🌡️ 24-Hour Temperature Trend</h3>
+                    <canvas id="temperatureChart"></canvas> <!-- Chart.js canvas -->
+                </div>
+                <!-- Humidity & Pressure Chart -->
+                <!-- Dual-axis chart for atmospheric conditions -->
+                <div class="chart-card">
+                    <h3>💧 Humidity & Pressure</h3>
+                    <canvas id="humidityChart"></canvas> <!-- Chart.js canvas -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== INTERACTIVE WEATHER MAP SECTION ===== -->
+        <!-- Live weather map with multiple overlay options -->
+        <div id="mapSection" class="map-section hidden">
+            <div class="section-title">🗺️ Interactive Weather Map</div>
+            <!-- Map Layer Controls -->
+            <!-- Switches between different weather data overlays -->
+            <div class="map-controls">
+                <button class="map-btn active" onclick="switchMapLayer('temp')">🌡️ Temperature</button>
+                <button class="map-btn" onclick="switchMapLayer('precipitation')">🌧️ Precipitation</button>
+                <button class="map-btn" onclick="switchMapLayer('wind')">💨 Wind</button>
+                <button class="map-btn" onclick="switchMapLayer('clouds')">☁️ Clouds</button>
+            </div>
+            <!-- Leaflet.js Map Container -->
+            <div id="weatherMap" class="weather-map"></div> <!-- Interactive map instance -->
+        </div>
+
+        <!-- ===== ACTIVITY SUGGESTIONS SECTION ===== -->
+        <!-- AI-powered activity recommendations based on weather conditions -->
+        <div id="activitiesSection" class="activities-section hidden" data-aos="fade-up">
+            <div class="section-title">
+                <span class="material-icons">beach_access</span>
+                Weather-Based Activity Suggestions
+            </div>
+            <div class="activities-container" id="activitiesContainer">
+                <!-- Activity cards will be dynamically generated -->
+                <!-- Includes: outdoor activities, indoor alternatives, weather-specific recommendations -->
+            </div>
+        </div>
+
+        <!-- ===== AIR QUALITY & POLLEN SECTION ===== -->
+        <!-- Environmental health information with AQI and allergen data -->
+        <div id="airQualitySection" class="air-quality-section hidden" data-aos="fade-up">
+            <div class="section-title">
+                <span class="material-icons">air</span>
+                Air Quality & Pollen Index
+            </div>
+            <div class="air-quality-container">
+                <!-- Main Air Quality Index Display -->
+                <!-- Shows overall AQI score with color-coded health rating -->
+                <div class="air-quality-main" id="airQualityMain">
+                    <!-- Main AQI display with health recommendations -->
+                </div>
+                <!-- Detailed Air Quality Metrics -->
+                <!-- Breakdown of specific pollutants (PM2.5, PM10, O3, etc.) -->
+                <div class="air-quality-details" id="airQualityDetails">
+                    <!-- Detailed air quality metrics with individual pollutant levels -->
+                </div>
+                <!-- Pollen Information -->
+                <!-- Allergen data for trees, grass, weeds with seasonal context -->
+                <div class="pollen-info" id="pollenInfo">
+                    <!-- Pollen information with allergen forecasts -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== CLOTHING RECOMMENDATIONS SECTION ===== -->
+        <!-- AI-powered outfit suggestions based on weather conditions -->
+        <div id="clothingSection" class="clothing-section hidden" data-aos="fade-up">
+            <div class="section-title">
+                <span class="material-icons">checkroom</span>
+                Smart Clothing Recommendations
+            </div>
+            <div class="clothing-container">
+                <!-- Main Outfit Display -->
+                <!-- Visual representation of recommended clothing ensemble -->
+                <div class="outfit-display" id="outfitDisplay">
+                    <!-- Main outfit recommendation with weather-appropriate clothing -->
+                </div>
+                <!-- Detailed Clothing Suggestions -->
+                <!-- Specific garment recommendations with reasoning -->
+                <div class="clothing-details" id="clothingDetails">
+                    <!-- Detailed clothing suggestions based on temperature, conditions -->
+                </div>
+                <!-- Accessories Recommendations -->
+                <!-- Additional items like umbrellas, sunglasses, hats -->
+                <div class="accessories-suggestions" id="accessoriesSuggestions">
+                    <!-- Accessories recommendations for weather protection/comfort -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== FAVORITES SECTION ===== -->
+        <!-- User's saved favorite cities for quick weather access -->
+        <div class="favorites-section hidden" id="favoritesSection">
+            <div class="favorites-title">📍 Favorite Cities</div>
+            <div class="favorite-cities" id="favoriteCities">
+                <!-- Favorite cities will be dynamically populated -->
+                <!-- Each city shows mini weather card with quick access -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== FLOATING CHAT BUTTON ===== -->
+    <!-- AI chatbot trigger button with modern glassmorphism design -->
+    <div class="chat-button" id="chatButton" data-aos="zoom-in" data-aos-delay="1000">
+        <span class="material-icons">chat</span> <!-- Chat bubble icon -->
+        <div class="chat-badge" id="chatBadge">AI</div> <!-- AI indicator badge -->
+    </div>
+
+    <!-- ===== CHATBOT CONTAINER ===== -->
+    <!-- Full-featured AI chatbot powered by Gemini API -->
+    <div class="chatbot-container hidden" id="chatbotContainer">
+        <!-- Chatbot Header -->
+        <!-- Bot identity, status, and close button -->
+        <div class="chatbot-header">
+            <div class="chatbot-avatar">
+                <span class="material-icons">smart_toy</span> <!-- Robot/bot icon -->
+            </div>
+            <div class="chatbot-info">
+                <h3>WeatherBot</h3> <!-- Bot name/identity -->
+                <!-- Online status indicator -->
+                <span class="status-indicator">
+                    <div class="status-dot"></div> <!-- Green dot for online status -->
+                    Online
+                </span>
+            </div>
+            <!-- Close chatbot button -->
+            <button class="chatbot-close" id="chatbotClose">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+        
+        <!-- Chat Messages Area -->
+        <!-- Scrollable container for conversation history -->
+        <div class="chatbot-messages" id="chatbotMessages">
+            <!-- Initial welcome message from bot -->
+            <div class="message bot-message">
+                <div class="message-avatar">
+                    <span class="material-icons">smart_toy</span> <!-- Bot avatar -->
+                </div>
+                <div class="message-content">
+                    <div class="message-bubble">
+                        👋 Hi there! I'm WeatherBot, your personal weather assistant. I can help you with weather information, activity suggestions, and more! How can I assist you today?
+                    </div>
+                    <div class="message-time">Just now</div> <!-- Timestamp -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Chat Input Area -->
+        <!-- Quick actions and message input interface -->
+        <div class="chatbot-input-area">
+            <!-- Quick Action Buttons -->
+            <!-- Pre-defined common queries for easy access -->
+            <div class="quick-actions">
+                <!-- Clothing recommendation quick action -->
+                <button class="quick-btn" onclick="sendQuickMessage('What should I wear today?')">
+                    <span class="material-icons">checkroom</span>
+                    Outfit
+                </button>
+                <!-- Activity suggestions quick action -->
+                <button class="quick-btn" onclick="sendQuickMessage('What activities can I do?')">
+                    <span class="material-icons">directions_run</span>
+                    Activities
+                </button>
+                <!-- Air quality quick action -->
+                <button class="quick-btn" onclick="sendQuickMessage('How is the air quality?')">
+                    <span class="material-icons">air</span>
+                    Air Quality
+                </button>
+            </div>
+            <!-- Message Input Container -->
+            <div class="input-container">
+                <!-- Text input for user messages -->
+                <input type="text" id="chatInput" placeholder="Ask me about weather, activities, or clothing..." maxlength="500">
+                <!-- Send message button -->
+                <button id="sendButton" class="send-button">
+                    <span class="material-icons">send</span>
+                </button>
+            </div>
+            <!-- Typing Indicator -->
+            <!-- Animated dots shown when AI is generating response -->
+            <div class="typing-indicator hidden" id="typingIndicator">
+                <div class="typing-dots">
+                    <span></span> <!-- Animated dot 1 -->
+                    <span></span> <!-- Animated dot 2 -->
+                    <span></span> <!-- Animated dot 3 -->
+                </div>
+                <span class="typing-text">WeatherBot is typing...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== CHAT OVERLAY ===== -->
+    <!-- Semi-transparent overlay shown when chatbot is open for mobile focus -->
+    <div class="chat-overlay hidden" id="chatOverlay"></div>
+
+    <!-- ===== JAVASCRIPT INCLUDES ===== -->
+    
+    <!-- Main Application Script -->
+    <!-- Contains all weather functionality, API calls, UI interactions, and chatbot logic -->
+    <script src="script_enhanced_final.js"></script>
+    
+    <!-- AOS Animation Initialization -->
+    <!-- Configures Animate On Scroll library for smooth page animations -->
+    <script>
+        // Initialize AOS animations with custom settings
+        AOS.init({
+            duration: 800,        // Animation duration in milliseconds
+            easing: 'ease-in-out', // Animation easing function
+            once: true,           // Animate elements only once
+            mirror: false         // Don't animate on scroll up
+        });
+    </script>
+</body>
+</html>
